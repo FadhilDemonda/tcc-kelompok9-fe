@@ -68,12 +68,15 @@ function Register() {
 
         try {
             // Adjust the API endpoint URL according to your backend
-            const response = await axios.post('http://localhost:5000/register', {
+            const response = await axios.post('http://tcc-kelompok9-be-995193249744.us-central1.run.app/register', {
                 nama: formData.nama,
                 email: formData.email,
                 password: formData.password,
                 confirm_password: formData.confirm_password
-            }); 
+            }, {
+                withCredentials: true, // Kirim kredensial/cookie
+            });
+            
             // Redirect to login page
             navigate('/login');
         } catch (err) {

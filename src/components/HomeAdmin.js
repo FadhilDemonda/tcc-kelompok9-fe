@@ -85,7 +85,7 @@ function Home() {
             };
 
             // Fetch data laporan (untuk statistik dan laporan terbaru)
-            const response = await axios.get('/laporan', config);
+            const response = await axios.get('https://tcc-kelompok9-be-995193249744.us-central1.run.app/laporan', config);
             const allReports = response.data.data.laporan || [];
 
             // Calculate statistics
@@ -174,7 +174,7 @@ function Home() {
             };
 
             // Send update request
-            await axios.put(`/laporan/${editingReport.id}`, updateData, config);
+            await axios.put(`https://tcc-kelompok9-be-995193249744.us-central1.run.app/laporan/${editingReport.id}`, updateData, config);
 
             // Close modal
             setIsEditModalOpen(false);

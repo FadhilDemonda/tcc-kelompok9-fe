@@ -1,0 +1,13 @@
+runtime: nodejs20
+service: tcc-kelompok9-fe
+instance_class: F1
+
+handlers:
+  - url: /static
+    static_dir: build/static
+
+  - url: /.*
+    static_files: build/index.html
+    upload: build/index.html
+
+default_expiration: "1h"

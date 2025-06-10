@@ -64,7 +64,7 @@ function Home() {
             let statsData = { pending: 0, proses: 0, selesai: 0, total: 0 };
             
             try {
-                const recentResponse = await axios.get('/laporan', config);
+                const recentResponse = await axios.get('https://tcc-kelompok9-be-995193249744.us-central1.run.app/laporan', config);
                 console.log('All reports response:', recentResponse.data);
                 
                 // Handle different possible response structures
