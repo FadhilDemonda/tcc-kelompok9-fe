@@ -15,7 +15,7 @@ function Login() {
     setErrorMsg('');
 
     try {
-      const response = await axios.post('https://tcc-kelompok9-be-995193249744.us-central1.run.app/login', {
+      const response = await axios.post('http://localhost:5000/login', {
         email,
         password,
       });

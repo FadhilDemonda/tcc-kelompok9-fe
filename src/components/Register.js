@@ -68,7 +68,7 @@ function Register() {
 
         try {
             // Adjust the API endpoint URL according to your backend
-            const response = await axios.post('https://tcc-kelompok9-be-995193249744.us-central1.run.app/register', {
+            const response = await axios.post('http://localhost:5000/register', {
                 nama: formData.nama,
                 email: formData.email,
                 password: formData.password,

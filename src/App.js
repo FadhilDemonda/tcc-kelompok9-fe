@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Home from "./components/Home";
 import Input from "./components/Input";
 import HomeAdmin from "./components/HomeAdmin";
+import RekapanLaporan from "./components/rekap";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/home" element={<Home/>} />
         <Route path="/input" element={<Input/>} />
         <Route path="/HomeAdmin" element={<HomeAdmin/>} />
+        <Route path="/rekapan" element={<RekapanLaporan/>} />
       </Routes>
     </BrowserRouter>
   );

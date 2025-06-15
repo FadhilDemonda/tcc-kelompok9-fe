@@ -85,7 +85,7 @@ function Home() {
             };
 
             // Fetch data laporan (untuk statistik dan laporan terbaru)
-            const response = await axios.get('https://tcc-kelompok9-be-995193249744.us-central1.run.app/laporan', config);
+            const response = await axios.get('http://localhost:5000/laporan', config);
             const allReports = response.data.data.laporan || [];
 
             // Calculate statistics
@@ -137,7 +137,8 @@ function Home() {
             prioritas: report.prioritas || 'rendah',
             status: report.status || 'pending',
             teknisi: report.teknisi || '',
-            biaya: report.biaya || ''
+            biaya: report.biaya || '',
+            pelapor_id: report.pelapor_id || null // ✅ tambahkan ini
         });
         setIsEditModalOpen(true);
     };
@@ -174,7 +175,7 @@ function Home() {
             };
 
             // Send update request
-            await axios.put(`https://tcc-kelompok9-be-995193249744.us-central1.run.app/laporan/${editingReport.id}`, updateData, config);
+            await axios.put(`http://localhost:5000/laporan/${editingReport.id}`, updateData, config);
 
             // Close modal
             setIsEditModalOpen(false);
@@ -210,6 +211,60 @@ function Home() {
             biaya: ''
         });
     };
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [deletingReport, setDeletingReport] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    
+    // Add this delete handler function
+const handleDeleteClick = (report) => {
+    setDeletingReport(report);
+    setIsDeleteModalOpen(true);
+};
+
+const handleDeleteConfirm = async () => {
+    if (!deletingReport) return;
+    
+    setIsDeleting(true);
+    try {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            throw new Error('No access token found');
+        }
+
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        // Send delete request
+        await axios.delete(`http://localhost:5000/laporan/${deletingReport.id}`, config);
+
+        // Close modal
+        setIsDeleteModalOpen(false);
+        setDeletingReport(null);
+        
+        // Refresh data
+        await fetchDashboardData();
+        
+        alert('Laporan berhasil dihapus!');
+    } catch (error) {
+        console.error('Error deleting report:', error);
+        let errorMessage = 'Gagal menghapus laporan';
+        if (error.response) {
+            errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+        }
+        alert(errorMessage);
+    } finally {
+        setIsDeleting(false);
+    }
+};
+
+const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeletingReport(null);
+};
 
     const formatTimeAgo = (dateString) => {
         const now = new Date();
@@ -278,14 +333,18 @@ function Home() {
                         </div>
                     </div>
                     <div className="header-right">
-                        <div className="user-info">
-                            <User size={20} />
-                            <span>{user.nama || user.name || 'User'}</span>
-                        </div>
-                        <button className="logout-btn" onClick={handleLogout}>
-                            <LogOut size={18} />
-                        </button>
-                    </div>
+  <Link to="/rekapan" className="rekapan-btn">
+    Rekapan
+  </Link>
+  <div className="user-info">
+    <User size={20} />
+    <span>{user.nama || user.name || 'User'}</span>
+  </div>
+  <button className="logout-btn" onClick={handleLogout}>
+    <LogOut size={18} />
+  </button>
+</div>
+
                 </div>
             </header>
 
@@ -426,7 +485,9 @@ function Home() {
                                                     >
                                                         <Edit size={16} />
                                                     </button>
-                                                    <button style={{
+                                                    <button
+                                                          onClick={() => handleDeleteClick(report)}
+                                                        style={{                                                   
                                                         padding: '8px',
                                                         border: 'none',
                                                         borderRadius: '6px',
@@ -921,6 +982,59 @@ function Home() {
                     </div>
                 </div>
             )}
+
+{isDeleteModalOpen && (
+  <div style={{
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999
+  }}>
+    <div style={{
+      backgroundColor: '#fff',
+      padding: '30px',
+      borderRadius: '10px',
+      width: '100%',
+      maxWidth: '400px',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+    }}>
+      <h3 style={{ marginBottom: '20px', color: '#333' }}>Konfirmasi Hapus</h3>
+      <p>Apakah kamu yakin ingin menghapus laporan <strong>{deletingReport?.judul}</strong>?</p>
+      <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+        <button
+          onClick={closeDeleteModal}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#ddd',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer'
+          }}
+        >
+          Batal
+        </button>
+        <button
+          onClick={handleDeleteConfirm}
+          disabled={isDeleting}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#ff4757',
+            border: 'none',
+            borderRadius: '6px',
+            color: '#fff',
+            cursor: isDeleting ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {isDeleting ? 'Menghapus...' : 'Hapus'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
             {/* Add spinning animation for loading */}
             <style jsx>{`
