@@ -158,7 +158,7 @@ function Input() {
 
         console.log('Data being sent:', submitData);
 
-        const response = await fetch('http://localhost:5000/laporan', {
+        const response = await fetch('http://localhost:https://tcc-kelompok9-be-995193249744.us-central1.run.app/laporan', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
